@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>ExamScan - Scanner Médico</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --bg-color: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --primary: #3B82F6; 
+            --accent: #3B82F6;
+            --text-main: #FFFFFF;
+            --text-muted: #9CA3AF;
+            --anim-speed: 10s;
+            color-scheme: dark;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            background-color: var(--bg-color);
+        }
+
+        body {
+            color: var(--text-main);
+            background: linear-gradient(135deg, #050505 0%, #080a0f 50%, #050505 100%);
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 30%),
+                        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+            z-index: -1;
+            animation: moveGradient 15s ease infinite alternate;
+        }
+
+        @keyframes moveGradient {
+            0% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.2) translate(2%, 5%); }
+            100% { transform: scale(1) translate(-1%, -2%); }
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; }
+        
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+        }
+
+        nav {
+            padding: 24px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 50;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: -0.02em;
+            color: var(--text-muted); /* Ajustado para o mesmo tom do botão de login */
+            transition: color 0.3s;
+        }
+
+        .nav-logo:hover { color: #fff; }
+
+        .login-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;
+            text-align: center;
+            position: relative;
+            width: 100%;
+            padding: 100px 0;
+            gap: 60px; 
+        }
+
+        .hero-branding-wrapper {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        h1.main-title {
+            font-size: 9rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            color: #ffffff;
+            background: linear-gradient(to right, #ffffff 20%, #3B82F6 50%, #ffffff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+            margin: 0;
+            opacity: 1;
+            filter: drop-shadow(0 0 40px rgba(59, 130, 246, 0.25));
+            line-height: 1;
+            z-index: 2;
+        }
+
+        p.subhead {
+            font-size: 1.6rem;
+            color: #E2E8F0;
+            font-weight: 300;
+            max-width: 800px;
+            letter-spacing: 0.1em;
+            line-height: 1.6;
+            opacity: 0.9;
+            z-index: 10;
+            margin: 0;
+        }
+
+        .social-proof-slim {
+            padding: 20px 0; 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .social-proof-content {
+            position: relative;
+            z-index: 2;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #CBD5E1;
+        }
+
+        .counter-glow {
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            display: inline-block;
+            min-width: 65px;
+            color: #ffffff;
+        }
+
+        .counter-glow.finished {
+            color: #ffffff;
+            background: linear-gradient(to right, #ffffff 20%, #3B82F6 50%, #ffffff 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
+        }
+
+        .floating-icons-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .bg-icon {
+            position: absolute;
+            bottom: -30px;
+            opacity: 0;
+            will-change: transform, opacity;
+        }
+
+        @keyframes floatUpSlim {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.15; }
+            80% { opacity: 0.15; }
+            100% { transform: translateY(-100px) rotate(25deg); opacity: 0; }
+        }
+
+        .cta-container {
+            width: 100%;
+            z-index: 19;
+            margin-top: 40px; 
+        }
+
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), #fff, var(--accent), transparent);
+            box-shadow: 0 0 60px 3px var(--accent);
+            animation: scan-bounce 5s infinite ease-in-out;
+            z-index: 1;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @keyframes scan-bounce {
+            0%, 100% { transform: translateY(-70px); opacity: 0.3; }
+            50% { transform: translateY(70px); opacity: 0.8; }
+        }
+
+        .section-header-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #ffffff 0%, #9CA3AF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.03em;
+            opacity: 1;
+        }
+
+        .features-slideshow {
+            padding: 80px 0 60px 0;
+            text-align: center;
+        }
+
+        .billboard-container {
+            max-width: 800px;
+            margin: 0 auto;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .billboard-slide {
+            position: absolute;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            filter: blur(10px);
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        .billboard-slide.active {
+            opacity: 1;
+            filter: blur(0);
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        .icon-alive {
+            will-change: transform;
+            animation: alive-bounce 3s ease-in-out infinite;
+        }
+
+        @keyframes alive-bounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+
+        .slide-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .slide-desc { font-size: 1.1rem; color: #94A3B8; }
+
+        .btn-main {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            background-image: 
+                radial-gradient(circle at 20% 35%, rgba(59, 130, 246, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 65%, rgba(59, 130, 246, 0.12) 0%, transparent 40%);
+            color: #fff;
+            padding: 18px 40px;
+            border-radius: 100px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-main:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .copy-snippet {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.6);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #A5F3FC;
+            margin-top: 10px;
+            border-left: 2px solid var(--accent);
+            text-align: left;
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        .active .copy-snippet { animation: slideIn 0.5s forwards; }
+
+        .btn-floating {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transform: translateY(100px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .btn-floating.visible { transform: translateY(0); opacity: 1; }
+
+        .continuous-motion-section { 
+            padding: 60px 0; 
+            text-align: center; 
+        }
+        .cm-container { padding: 0; background: transparent; border: none; }
+        .cm-layout { display: flex; align-items: center; justify-content: space-between; max-width: 950px; margin: 0 auto; }
+        .cm-col { width: 160px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .cm-col h4 { margin-top: 18px; font-size: 0.9rem; color: #fff; font-weight: 600; letter-spacing: 0.02em; }
+        .cm-col p { font-size: 0.75rem; color: #94A3B8; margin-top: 4px; }
+        
+        .cm-icon-wrapper { position: relative; width: 70px; height: 70px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: 18px; display: flex; align-items: center; justify-content: center; }
+
+        .continuous-motion-section.is-active .cm-scan-laser { animation: phoneScanGPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .cm-ai-ring { animation: aiActionGPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .cm-qr-scanner { animation: qrActionGPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .cm-emr-line { animation: emrFillGPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .p1 { animation: travel1GPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .p2 { animation: travel2GPU var(--anim-speed) infinite; }
+        .continuous-motion-section.is-active .p3 { animation: travel3GPU var(--anim-speed) infinite; }
+
+        .cm-scan-laser { position: absolute; width: 60%; height: 2px; background: var(--primary); box-shadow: 0 0 10px var(--primary); will-change: transform, opacity; opacity: 0; transform: translateY(-15px); }
+        @keyframes phoneScanGPU { 0%, 21%, 100% { transform: translateY(-15px); opacity: 0; } 5%, 16% { opacity: 1; } 10% { transform: translateY(15px); } }
+
+        .cm-ai-ring { position: absolute; width: 100%; height: 100%; border: 2px dashed var(--primary); border-radius: 18px; will-change: transform, opacity; opacity: 0; transform: scale(0.8); }
+        @keyframes aiActionGPU { 0%, 29%, 51%, 100% { transform: rotate(0deg) scale(0.8); opacity: 0; } 35%, 45% { opacity: 0.6; } 40% { transform: rotate(180deg) scale(1.05); opacity: 1; } }
+
+        .cm-qr-scanner { position: absolute; width: 35px; height: 35px; border: 2px solid var(--primary); border-radius: 4px; will-change: transform, opacity; opacity: 0; transform: scale(0.7); }
+        @keyframes qrActionGPU { 0%, 59%, 81%, 100% { transform: scale(0.7); opacity: 0; } 65%, 75% { opacity: 1; transform: scale(1); } 70% { transform: scale(1.1); border-color: #fff; } }
+
+        .cm-emr-line { height: 3px; background: var(--primary); border-radius: 2px; width: 100%; margin: 4px 0; transform-origin: left; will-change: transform; transform: scaleX(0); }
+        @keyframes emrFillGPU { 0%, 89% { transform: scaleX(0); opacity: 0.2; } 95%, 100% { transform: scaleX(1); opacity: 1; } }
+
+        .cm-connector { flex: 1; height: 1px; background: rgba(255, 255, 255, 0.1); position: relative; }
+        .cm-packet { position: absolute; width: 18px; height: 18px; background: #050505; border: 1px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); top: -9px; left: 0; opacity: 0; will-change: transform, opacity; }
+
+        @keyframes travel1GPU { 0%, 19%, 31%, 100% { transform: translateX(0); opacity: 0; } 22% { opacity: 1; } 30% { transform: translateX(120%); opacity: 0; } }
+        @keyframes travel2GPU { 0%, 49%, 61%, 100% { transform: translateX(0); opacity: 0; } 52% { opacity: 1; } 60% { transform: translateX(120%); opacity: 0; } }
+        @keyframes travel3GPU { 0%, 79%, 91%, 100% { transform: translateX(0); opacity: 0; } 82% { opacity: 1; } 90% { transform: translateX(120%); opacity: 0; } }
+
+        .bento-section { padding: 40px 0 100px; }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .bento-card { padding: 30px; transition: all 0.3s; border: 1px solid var(--glass-border); }
+        .bento-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-5px); border-color: var(--primary); }
+        .bento-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #fff; letter-spacing: 0.05em; }
+        .bento-text { font-size: 0.85rem; color: #94A3B8; line-height: 1.5; }
+        .icon-box { margin-bottom: 20px; color: var(--primary); }
+
+        @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+        @keyframes shine { to { background-position: 200% center; } }
+
+        .explainer-section {
+            padding: 100px 0 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .explainer-section::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .explainer-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #60A5FA;
+            border: 1px solid rgba(59, 130, 246, 0.35);
+            background: rgba(59, 130, 246, 0.12);
+            padding: 6px 14px;
+            border-radius: 100px;
+            margin-bottom: 28px;
+        }
+
+        .explainer-eyebrow span {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.7); }
+        }
+
+        .explainer-headline {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1.1;
+            margin-bottom: 0;
+            color: #ffffff;
+            max-width: 700px;
+        }
+
+        .explainer-headline .hl-muted {
+            color: #ffffff;
+            background: linear-gradient(to right, #ffffff 0%, #94A3B8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .explainer-headline .hl-blue {
+            color: #3B82F6;
+            background: linear-gradient(135deg, #60a5fa 0%, #3B82F6 50%, #93c5fd 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 5s linear infinite;
+        }
+
+        .explainer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            margin-top: 60px;
+        }
+
+        .explainer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .explainer-para {
+            font-size: 1.05rem;
+            color: #CBD5E1;
+            line-height: 1.75;
+        }
+
+        .explainer-para strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .explainer-divider {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+            border-radius: 2px;
+        }
+
+        .explainer-stat-row {
+            display: flex;
+            gap: 24px;
+        }
+
+        .explainer-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .explainer-stat-num {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            color: #ffffff;
+            background: linear-gradient(to right, #fff 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .explainer-stat-label {
+            font-size: 0.78rem;
+            color: #94A3B8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .explainer-visual {
+            position: relative;
+        }
+
+        .exv-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .exv-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(59,130,246,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .exv-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exv-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+
+        .exv-header-label {
+            font-size: 0.72rem;
+            color: #94A3B8;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-left: 4px;
+        }
+
+        .exv-body {
+            padding: 20px;
+        }
+
+        .exv-before {
+            border-color: rgba(255,255,255,0.08);
+            margin-bottom: 14px;
+        }
+
+        .exv-scanned-img {
+            width: 100%;
+            height: 100px;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 18px,
+                    rgba(255,255,255,0.05) 18px,
+                    rgba(255,255,255,0.05) 19px
+                );
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .exv-scanned-img::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.9), transparent);
+            animation: scan-sweep 3s ease-in-out infinite;
+        }
+
+        @keyframes scan-sweep {
+            0%, 100% { top: 0; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            50% { top: 98px; }
+        }
+
+        .exv-scanned-text {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.3);
+            font-family: 'Courier New', monospace;
+            line-height: 2.1;
+            letter-spacing: 0.02em;
+            user-select: none;
+        }
+
+        .exv-arrow-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 4px 0 12px;
+            position: relative;
+        }
+
+        .exv-arrow-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.4), transparent);
+        }
+
+        .exv-arrow-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 100px;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #60A5FA;
+            white-space: nowrap;
+        }
+
+        .exv-after {
+            border-color: rgba(59,130,246,0.2);
+        }
+
+        .exv-after .exv-header {
+            border-bottom-color: rgba(59,130,246,0.15);
+            background: rgba(59,130,246,0.06);
+        }
+
+        .exv-result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.8rem;
+        }
+
+        .exv-result-row:last-child { border-bottom: none; }
+
+        .exv-result-key {
+            color: #94A3B8;
+        }
+
+        .exv-result-val {
+            color: #fff;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            font-size: 0.78rem;
+        }
+
+        .exv-result-val.ok { color: #34d399; }
+        .exv-result-val.warn { color: #fbbf24; }
+
+        .exv-copy-btn {
+            margin-top: 14px;
+            width: 100%;
+            background: rgba(59,130,246,0.15);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #60A5FA;
+            cursor: pointer;
+            transition: all 0.25s;
+            animation: copy-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes copy-pulse {
+            0%, 100% { box-shadow: none; }
+            50% { box-shadow: 0 0 20px rgba(59,130,246,0.2); border-color: rgba(59,130,246,0.5); }
+        }
+
+        .explainer-badge-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .explainer-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 5px 12px;
+            font-size: 0.75rem;
+            color: #CBD5E1;
+            transition: all 0.3s;
+        }
+
+        .explainer-badge:hover {
+            border-color: rgba(59,130,246,0.4);
+            color: #fff;
+            background: rgba(59,130,246,0.1);
+        }
+
+        .explainer-badge i { color: #60A5FA; }
+
+        .trust-banner {
+            margin: 20px auto 40px;
+            padding: 24px 40px;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+            position: relative;
+        }
+
+        .trust-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.08);
+            pointer-events: none;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .trust-icon {
+            background: rgba(59, 130, 246, 0.15);
+            padding: 10px;
+            border-radius: 10px;
+            color: #60A5FA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trust-text h4 {
+            color: #F8FAFC;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .trust-text p {
+            color: #94A3B8;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .explainer-grid { grid-template-columns: 1fr; gap: 40px; }
+            .explainer-headline { font-size: 2.2rem; }
+            .explainer-stat-row { gap: 20px; }
+            
+            h1.main-title { font-size: 4rem; }
+            p.subhead { font-size: 1.1rem; padding: 0 10px; }
+            .hero { height: auto; min-height: 500px; padding: 60px 0; gap: 40px; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .cm-layout { flex-direction: column; gap: 25px; }
+            .cm-connector { width: 1px; height: 30px; }
+            .section-header-title { font-size: 1.8rem; }
+            
+            .trust-banner { flex-direction: column; gap: 24px; padding: 24px; }
+
+            @keyframes travel1GPU { 0%, 19%, 31%, 100% { transform: translateY(0); opacity: 0; } 22% { opacity: 1; } 30% { transform: translateY(120%); opacity: 0; } }
+            @keyframes travel2GPU { 0%, 49%, 61%, 100% { transform: translateY(0); opacity: 0; } 52% { opacity: 1; } 60% { transform: translateY(120%); opacity: 0; } }
+            @keyframes travel3GPU { 0%, 79%, 91%, 100% { transform: translateY(0); opacity: 0; } 82% { opacity: 1; } 90% { transform: translateY(120%); opacity: 0; } }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <nav>
+            <div class="nav-logo">ExameScan</div>
+            <a href="/dashboard" class="login-link">Login</a>
+        </nav>
+
+        <header class="hero">
+            <p class="subhead">Exames do papel direto para o prontuário eletrônico</p>
+            
+            <div class="hero-branding-wrapper">
+                <div class="scan-line"></div>
+                <h1 class="main-title">ExameScan</h1>
+            </div>
+
+            <div class="cta-container">
+                <a href="/dashboard?criarConta=true" class="btn-main" id="heroBtn">
+                    Começar Agora <i data-lucide="arrow-right" size="18"></i>
+                </a>
+            </div>
+        </header>
+
+        <section class="social-proof-slim" id="socialProof">
+            <div class="floating-icons-bg" id="iconCanvas"></div>
+            <div class="social-proof-content">
+                Usado por mais de <span class="counter-glow" id="socialCounter">0000</span> profissionais da saúde
+            </div>
+        </section>
+
+        <section class="explainer-section" id="what-is-section">
+            <div class="explainer-eyebrow">
+                <span></span>
+                O que é o ExameScan?
+            </div>
+
+            <h2 class="explainer-headline">
+                <span class="hl-muted">Pare de digitar</span><br>
+                <span class="hl-blue">e volte a ser médico</span>
+            </h2>
+
+            <div class="explainer-grid">
+                <div class="explainer-left">
+                    <p class="explainer-para">
+                        O ExameScan é uma <strong>Ferramenta de Transcrição Médica</strong>. Você aponta a câmera do celular para qualquer exame em papel — laudo, hemograma,  exame descritivo — e em segundos recebe o texto <strong>Estruturado, Limpo e Pronto para Colar</strong> no seu prontuário.
+                    </p>
+
+                    <div class="explainer-divider"></div>
+
+                    <p class="explainer-para">
+                        Ganhe agilidade com a <strong>Análise Inteligente</strong> que detecta parâmetros alterados automáticamente. Você também pode <strong>Conectar</strong> facilmente seu celular ao computador com o <strong>QR Code Login</strong>.
+                    </p>
+
+                    <div class="explainer-stat-row">
+                        <div class="explainer-stat">
+                            <span class="explainer-stat-num">6min</span>
+                            <span class="explainer-stat-label">Por consulta</span>
+                        </div>
+                        <div class="explainer-stat">
+                            <span class="explainer-stat-num">1hora</span>
+                            <span class="explainer-stat-label">A cada 10 pacientes</span>
+                        </div>
+                        <div class="explainer-stat">
+                            <span class="explainer-stat-num">0</span>
+                            <span class="explainer-stat-label">Stress digitando exames</span>
+                        </div>
+                    </div>
+
+                    <div class="explainer-badge-row">
+                        <div class="explainer-badge">
+                            <i data-lucide="smartphone" size="13"></i>
+                            Câmera do celular
+                        </div>
+                        <div class="explainer-badge">
+                            <i data-lucide="brain-circuit" size="13"></i>
+                            IA estrutura
+                        </div>
+                        <div class="explainer-badge">
+                            <i data-lucide="clipboard-paste" size="13"></i>
+                            Você cola
+                        </div>
+                    </div>
+                </div>
+
+                <div class="explainer-visual">
+
+                    <div class="exv-card exv-before">
+                        <div class="exv-header">
+                            <div class="exv-dot" style="background:#ef4444;"></div>
+                            <div class="exv-dot" style="background:#f59e0b;"></div>
+                            <div class="exv-dot" style="background:#22c55e;"></div>
+                            <span class="exv-header-label">exame em papel</span>
+                        </div>
+                        <div class="exv-body">
+                            <div class="exv-scanned-img">
+                                <div class="exv-scanned-text">
+                                    Glicose ............ 98 mg/dL<br>
+                                    Hemoglob. ........ 13.5 g/dL<br>
+                                    Leucócitos ..... 6.500 /mm³<br>
+                                    Hematócrito ....... 40.2 %
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exv-arrow-wrapper">
+                        <div class="exv-arrow-line"></div>
+                        <div class="exv-arrow-badge">
+                            <i data-lucide="zap" size="11"></i>
+                            ExameScan IA processa
+                        </div>
+                        <div class="exv-arrow-line"></div>
+                    </div>
+
+                    <div class="exv-card exv-after">
+                        <div class="exv-header">
+                            <div class="exv-dot" style="background:rgba(59,130,246,0.5);"></div>
+                            <div class="exv-dot" style="background:rgba(59,130,246,0.3);"></div>
+                            <div class="exv-dot" style="background:rgba(59,130,246,0.2);"></div>
+                            <span class="exv-header-label" style="color:#60A5FA;">texto estruturado · pronto para colar</span>
+                        </div>
+                        <div class="exv-body">
+                            <div class="exv-result-row">
+                                <span class="exv-result-key">Glicose</span>
+                                <span class="exv-result-val ok">98 mg/dL ✓</span>
+                            </div>
+                            <div class="exv-result-row">
+                                <span class="exv-result-key">Hemoglobina</span>
+                                <span class="exv-result-val warn">13.5 g/dL ↓</span>
+                            </div>
+                            <div class="exv-result-row">
+                                <span class="exv-result-key">Leucócitos</span>
+                                <span class="exv-result-val ok">6.500 /mm³ ✓</span>
+                            </div>
+                            <div class="exv-result-row">
+                                <span class="exv-result-key">Hematócrito</span>
+                                <span class="exv-result-val ok">40.2 % ✓</span>
+                            </div>
+                            <button class="exv-copy-btn" onclick="this.textContent='✓ Copiado!'; setTimeout(()=>{this.innerHTML='<i data-lucide=\'copy\' size=\'13\'></i> Copiar como texto'; lucide.createIcons();},2000)">
+                                Copiar como texto
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="continuous-motion-section" id="processo-section">
+            <h2 class="section-header-title">Processo Simplificado</h2>
+            
+            <div class="cm-container">
+                <div class="cm-layout">
+                    
+                    <div class="cm-col">
+                        <div class="cm-icon-wrapper">
+                            <i data-lucide="smartphone" style="color:#fff; opacity:0.8"></i>
+                            <div class="cm-scan-laser"></div>
+                        </div>
+                        <h4>1. Capture</h4>
+                        <p>Escaneie o exame com o celular</p>
+                    </div>
+
+                    <div class="cm-connector"><div class="cm-packet p1"><i data-lucide="file-text" size="10"></i></div></div>
+
+                    <div class="cm-col">
+                        <div class="cm-icon-wrapper">
+                            <i data-lucide="brain-circuit" style="color:#fff; opacity:0.8"></i>
+                            <div class="cm-ai-ring"></div>
+                        </div>
+                        <h4>2. Transcrição</h4>
+                        <p>ExameScan transcreve e analisa</p>
+                    </div>
+
+                    <div class="cm-connector"><div class="cm-packet p2"><i data-lucide="braces" size="10"></i></div></div>
+
+                    <div class="cm-col">
+                        <div class="cm-icon-wrapper">
+                            <i data-lucide="qr-code" style="color:#fff; opacity:0.8"></i>
+                            <div class="cm-qr-scanner"></div>
+                        </div>
+                        <h4>3. Conecte o PC</h4>
+                        <p>Facilite o processo com o login via QR Code</p>
+                    </div>
+
+                    <div class="cm-connector"><div class="cm-packet p3"><i data-lucide="terminal" size="10"></i></div></div>
+
+                    <div class="cm-col">
+                        <div class="cm-icon-wrapper">
+                            <i data-lucide="monitor" style="color:#fff; opacity:0.8"></i>
+                            <div style="position:absolute; width:26px; top:35px">
+                                <div class="cm-emr-line"></div>
+                                <div class="cm-emr-line" style="animation-delay:0.1s"></div>
+                                <div class="cm-emr-line" style="animation-delay:0.2s"></div>
+                            </div>
+                        </div>
+                        <h4>4. Prontuário</h4>
+                        <p>Cole a transcrição no seu prontuário</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="trust-banner">
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <i data-lucide="image-off" size="20"></i>
+                </div>
+                <div class="trust-text">
+                    <h4>Não Armazenamos as Fotos</h4>
+                    <p>As fotos dos exames não ficam salvas em nosso banco de dados.</p>
+                </div>
+            </div>
+            
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <i data-lucide="shield-check" size="20"></i>
+                </div>
+                <div class="trust-text">
+                    <h4>Anonimização de Dados</h4>
+                    <p>Não processamos nomes ou dados de identificação do paciente.</p>
+                </div>
+            </div>
+            
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <i data-lucide="lock" size="20"></i>
+                </div>
+                <div class="trust-text">
+                    <h4>Comunicação Segura</h4>
+                    <p>Toda a transferência de dados é feita com endpoints protegidos.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-slideshow">
+            
+            <div class="billboard-container glass" id="billboard">
+                <div class="billboard-slide active">
+                    <div class="demo-content" style="display: flex; gap: 40px; align-items: center;">
+                        <div style="text-align: center;">
+                            <i data-lucide="file-text" size="48" color="#CBD5E1" class="icon-alive"></i>
+                            <p style="font-size: 0.75rem; margin-top: 10px; color: #94A3B8;">Exame em papel</p>
+                        </div>
+                        <i data-lucide="arrow-right-left" color="#3B82F6"></i>
+                        <div style="text-align: left; width: 220px;">
+                            <div class="copy-snippet" style="animation-delay: 0.2s;">Glicose: 98 mg/dL</div>
+                            <div class="copy-snippet" style="animation-delay: 0.4s;">Hemoglobina: 13.5 g/dL</div>
+                            <div class="copy-snippet" style="animation-delay: 0.6s;">Leucócitos: 6.500 /mm³</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="billboard-slide" data-duration="1500">
+                    <div class="icon-alive" style="margin-bottom: 15px;">
+                        <i data-lucide="stethoscope" size="40" color="#3B82F6"></i>
+                    </div>
+                    <h1 class="slide-title">Foco no Paciente</h1>
+                    <p class="slide-desc">Pare de digitar, volte a ser médico.</p>
+                </div>
+
+                <div class="billboard-slide" data-duration="1500">
+                    <div class="icon-alive" style="margin-bottom: 15px;">
+                        <i data-lucide="clock" size="40" color="#3B82F6"></i>
+                    </div>
+                    <h1 class="slide-title">Economize Tempo</h1>
+                    <p class="slide-desc">Chegue mais cedo em casa!</p>
+                </div>
+
+                <div class="billboard-slide" data-duration="1500">
+                    <div class="icon-alive" style="margin-bottom: 15px;">
+                        <i data-lucide="brain-circuit" size="40" color="#3B82F6"></i>
+                    </div>
+                    <h1 class="slide-title">Saúde Mental</h1>
+                    <p class="slide-desc">Poupe seu cérebro de tarefas repetitivas.</p>
+                </div>
+
+                <div class="billboard-slide" data-duration="1500">
+                    <div class="icon-alive" style="margin-bottom: 15px;">
+                        <i data-lucide="smartphone" size="40" color="#3B82F6"></i>
+                    </div>
+                    <h1 class="slide-title">Ecossistema</h1>
+                    <p class="slide-desc">Do celular para o Desktop via QR Code.</p>
+                </div>
+
+                <div class="billboard-slide" data-duration="1500">
+                    <div class="icon-alive" style="margin-bottom: 15px;">
+                        <i data-lucide="mouse-pointer-click" size="40" color="#3B82F6"></i>
+                    </div>
+                    <h1 class="slide-title">Copia e Cola</h1>
+                    <p class="slide-desc">Universal para qualquer prontuário.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="bento-section">
+            <div class="bento-grid">
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="stethoscope"></i></div>
+                    <div class="bento-title">MAIS MEDICINA</div>
+                    <p class="bento-text">Liberte-se da digitação mecânica e foque no diagnóstico e no paciente.</p>
+                </div>
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="history"></i></div>
+                    <div class="bento-title">ECONOMIA DE TEMPO</div>
+                    <p class="bento-text">Redução drástica no tempo de preenchimento de prontuários eletrônicos.</p>
+                </div>
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="brain"></i></div>
+                    <div class="bento-title">ZERO BURNOUT</div>
+                    <p class="bento-text">Elimine o desgaste mental causado por tarefas burocráticas e repetitivas.</p>
+                </div>
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="unplug"></i></div>
+                    <div class="bento-title">MULTIDEVICE</div>
+                    <p class="bento-text">Escaneie com a câmera do celular e receba o texto pronto no seu computador.</p>
+                </div>
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="copy"></i></div>
+                    <div class="bento-title">CTRL+C / CTRL+V</div>
+                    <p class="bento-text">Compatibilidade universal. Funciona em qualquer sistema de prontuário. É só colar o texto.</p>
+                </div>
+                <div class="glass bento-card">
+                    <div class="icon-box"><i data-lucide="gift"></i></div>
+                    <div class="bento-title">ACESSO GRATUITO</div>
+                    <p class="bento-text">Crie sua conta e comece a escanear agora mesmo sem custos iniciais.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <a href="/dashboard?criarConta=true" class="btn-floating" id="floatingCta">
+        Começar Agora <i data-lucide="zap" size="18"></i>
+    </a>
+
+    <script>
+        lucide.createIcons();
+
+        const counterEl = document.getElementById('socialCounter');
+        let counterStarted = false;
+
+        function startCounter() {
+            if (counterStarted) return;
+            counterStarted = true;
+            let current = 0;
+            const target = 5000;
+            const duration = 2000;
+            const startTime = performance.now();
+
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easedProgress = progress * (2 - progress);
+                current = Math.floor(easedProgress * target);
+                counterEl.innerText = current.toString().padStart(4, '0');
+                if (progress < 1) requestAnimationFrame(update);
+                else counterEl.classList.add('finished');
+            }
+            requestAnimationFrame(update);
+        }
+
+        const iconCanvas = document.getElementById('iconCanvas');
+        const iconTypes = ['heart', 'activity', 'pill', 'syringe', 'dna', 'thermometer'];
+        
+        function spawnIcon() {
+            const iconWrap = document.createElement('div');
+            iconWrap.className = 'bg-icon';
+            iconWrap.style.left = Math.random() * 95 + '%';
+            
+            const animDuration = (Math.random() * 3 + 4) + 's';
+            iconWrap.style.animation = `floatUpSlim ${animDuration} linear forwards`;
+            
+            const iconName = iconTypes[Math.floor(Math.random() * iconTypes.length)];
+            const iconSize = Math.floor(Math.random() * 10 + 16);
+            
+            iconWrap.innerHTML = `<i data-lucide="${iconName}" size="${iconSize}" color="#3B82F6"></i>`;
+            iconCanvas.appendChild(iconWrap);
+            
+            lucide.createIcons({
+                attrs: { "stroke-width": 1.5 },
+                icons: iconWrap.querySelectorAll('[data-lucide]')
+            });
+            
+            setTimeout(() => iconWrap.remove(), 7000);
+        }
+        setInterval(spawnIcon, 800);
+
+        const slides = document.querySelectorAll('.billboard-slide');
+        let currentSlide = 0;
+        const speed = 2500; 
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        setInterval(nextSlide, speed);
+
+        const floatingCta = document.getElementById('floatingCta');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) { floatingCta.classList.add('visible'); } 
+            else { floatingCta.classList.remove('visible'); }
+        });
+
+        const observerOptions = { threshold: 0.2 };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (entry.target.id === 'socialProof') startCounter();
+                    if (entry.target.id === 'processo-section') entry.target.classList.add('is-active');
+                } else {
+                    if (entry.target.id === 'processo-section') entry.target.classList.remove('is-active');
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(document.getElementById('socialProof'));
+        observer.observe(document.getElementById('processo-section'));
+    </script>
+</body>
+</html>
